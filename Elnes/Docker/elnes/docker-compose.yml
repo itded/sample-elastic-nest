@@ -1,0 +1,38 @@
+﻿version: "3"
+
+services:
+  elastic:
+    container_name: elnes-elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.1
+    restart: "unless-stopped"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9300:9200"
+    networks: 
+      - elnes-net
+  kibana:
+    container_name: elnes-kibana
+    image: docker.elastic.co/kibana/kibana:8.6.1
+    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elnes-elastic:9200    # address of elasticsearch docker container which kibana will connect
+    ports:
+      - 5701:5601
+    depends_on:
+      - elasticsearch       
+  mssql:
+    container_name: elnes-mssql
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    ports:
+      - '3700:1433'
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd
+    networks:
+      - elnes-net
+        
+networks:
+  elnes-net:
+    driver: bridge
