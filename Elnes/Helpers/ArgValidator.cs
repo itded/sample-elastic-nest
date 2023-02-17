@@ -23,7 +23,7 @@ public static class ArgValidator
             ThrowUnknownCommandException();
         }
 
-        if (copyRows && (args.Length == 1 || args[1] != "--all" || !int.TryParse(args[1], out _)))
+        if (copyRows && (args.Length != 2 && (args[1] != "--all" || !int.TryParse(args[1], out _))))
         {
             ThrowUnknownCommandException();
         }

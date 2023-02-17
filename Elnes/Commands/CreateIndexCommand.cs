@@ -30,7 +30,7 @@ public class CreateIndexCommand : IDataCommand
             Settings = settings
         };
 
-        var result = await esClient.Indices.ExistsAsync(Common.Constants.ElasticTeacherIndexName);
+        var result = await esClient.Indices.ExistsAsync(Common.Constants.ElasticTeacherIndexName, null, cancellationToken);
         if (!result.Exists)
         {
             await esClient.Indices.CreateAsync(Common.Constants.ElasticTeacherIndexName, c => c

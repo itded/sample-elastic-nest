@@ -1,4 +1,6 @@
-﻿using Elnes.Factories;
+﻿using Elnes.Data;
+using Elnes.Factories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,8 +22,8 @@ public class Startup
     {
         services.AddSingleton((IConfiguration)Configuration);
 
-        // services.AddDbContext<AppDbContext>
-        //     (options => options.UseSqlServer(Configuration.GetConnectionString("AuthConnectionString")));
+        services.AddDbContext<AppDbContext>
+            (options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
 
         services.AddSingleton<ICommandFactory, CommandFactory>();
     }
