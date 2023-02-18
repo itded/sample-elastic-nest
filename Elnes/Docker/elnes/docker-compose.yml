@@ -19,14 +19,14 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elnes-elastic:9200    # address of elasticsearch docker container which kibana will connect
     ports:
-      - 5701:5601
+      - "5701:5601"
     depends_on:
       - elasticsearch       
   mssql:
     container_name: elnes-mssql
-    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
     ports:
-      - '3700:1433'
+      - "3700:1433"
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=P@ssw0rd

@@ -2,18 +2,21 @@
 using Elnes.Data;
 using Elnes.Elastic.Documents;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Nest;
 
 namespace Elnes.Commands;
 
 public class CopyDataToElasticCommand : IDataCommand
 {
+    private readonly ILogger<CopyDataToElasticCommand> _logger;
     private readonly AppDbContext _appDbContext;
     private readonly Uri _esNodeUri;
     private readonly int? _teacherId;
 
-    public CopyDataToElasticCommand(AppDbContext appDbContext, Uri esNodeUri, int? teacherId)
+    public CopyDataToElasticCommand(ILogger<CopyDataToElasticCommand> logger, AppDbContext appDbContext, Uri esNodeUri, int? teacherId)
     {
+        _logger = logger;
         _appDbContext = appDbContext;
         _esNodeUri = esNodeUri;
         _teacherId = teacherId;
@@ -44,9 +47,7 @@ public class CopyDataToElasticCommand : IDataCommand
 
         if (!teacherSubjects.Any())
         {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"Teacher subjects with TeacherId = {teacherId} were not found");
-            Console.ForegroundColor = ConsoleColor.White;
+            _logger.LogWarning($@"Teacher subjects with TeacherId = {teacherId} were not found");
             return;
         }
 
@@ -63,7 +64,7 @@ public class CopyDataToElasticCommand : IDataCommand
             .Index(Constants.ElasticTeacherIndexName)
             .Id(teacher.Id), cancellationToken);
 
-        Console.WriteLine($"{teacherId}: {createResult.Result}");
+        _logger.LogInformation($@"{teacherId}: {createResult.Result}");
     }
 
     private async Task CreateTeacherDocuments(CancellationToken cancellationToken, ElasticClient esClient)
@@ -87,7 +88,15 @@ public class CopyDataToElasticCommand : IDataCommand
                 .Index(Constants.ElasticTeacherIndexName)
                 .Id(teacher.Id), cancellationToken);
 
-            Console.WriteLine($"{teacher.Id}: {createResult.Result}");
+            // expected state
+            if (createResult.Result == Result.Created)
+            {
+                _logger.LogInformation($@"{teacher.Id}: {createResult.Result}");
+            }
+            else
+            {
+                _logger.LogError($@"{teacher.Id}: {createResult.Result}");
+            }
         }
     }
 }

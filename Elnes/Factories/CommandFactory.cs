@@ -3,6 +3,7 @@ using Elnes.Common;
 using Elnes.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Elnes.Factories;
 
@@ -52,7 +53,8 @@ public class CommandFactory : ICommandFactory
             var nodeUrl = GetConfigNodeUrl();
 
             var dbContext = _serviceProvider.GetRequiredService<AppDbContext>();
-            return new CopyDataToElasticCommand(dbContext, nodeUrl, teacherId);
+            var logger = _serviceProvider.GetRequiredService<ILogger<CopyDataToElasticCommand>>();
+            return new CopyDataToElasticCommand(logger, dbContext, nodeUrl, teacherId);
         }
 
         throw new InvalidOperationException();

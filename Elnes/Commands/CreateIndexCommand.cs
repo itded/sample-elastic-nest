@@ -35,7 +35,7 @@ public class CreateIndexCommand : IDataCommand
         {
             await esClient.Indices.CreateAsync(Common.Constants.ElasticTeacherIndexName, c => c
                 .InitializeUsing(indexConfig)
-                .Map(m => m.AutoMap<TeacherIndex>()));
+                .Map(m => m.AutoMap<TeacherIndex>()), cancellationToken);
         }
         else
         {

@@ -10,9 +10,9 @@ public class Teacher
     
     [MaxLength(50)]
     [Required]
-    public string FirstName { get; set; }
-    
+    public string FirstName { get; set; } = null!;
+
     [MaxLength(50)]
     [Required]
-    public string LastName { get; set; }
+    public string LastName { get; set; } = null!;
 }
